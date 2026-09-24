@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h1>Recorder</h1>
+    <p id="status">Not recording</p>
+    <button id="startBtn" type="button">Start Recording</button>
+    <button id="startStepsBtn" type="button">Start Step-by-Step Capture</button>
+    <button id="stopBtn" type="button" hidden>Stop</button>
+    <p id="error" class="error" hidden></p>
+    <div class="drive-section">
+      <label class="drive-toggle">
+        <input type="checkbox" id="driveEnabledCheckbox" />
+        <span>Also save to Google Drive</span>
+      </label>
+      <p id="driveStatus" class="drive-status"></p>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
