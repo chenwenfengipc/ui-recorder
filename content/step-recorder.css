@@ -4,6 +4,8 @@
   top: 12px;
   right: 12px;
   z-index: 2147483647;
+  display: flex;
+  gap: 8px;
   opacity: 0.5;
   transition: opacity 0.15s ease;
 }
@@ -30,7 +32,7 @@
   background: #e23c3c;
 }
 
-#__rec_ext_overlay__ button::before {
+#__rec_ext_overlay__ #__rec_ext_stop_btn__::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -43,12 +45,67 @@
 }
 
 /* Shown briefly (via a class toggle) when a screenshot capture fails. */
-#__rec_ext_overlay__ button.__rec_ext_error__ {
+#__rec_ext_overlay__ #__rec_ext_stop_btn__.__rec_ext_error__ {
   background: #f5a623;
 }
 
-#__rec_ext_overlay__ button.__rec_ext_error__::before {
+#__rec_ext_overlay__ #__rec_ext_stop_btn__.__rec_ext_error__::before {
   background: #1f1f1f;
+}
+
+/* Pause icon: two white bars */
+#__rec_ext_overlay__ .__rec_ext_pause__ {
+  background: #2d6cdf;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__:hover {
+  background: #2559ba;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__::before,
+#__rec_ext_overlay__ .__rec_ext_pause__::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 4px;
+  height: 14px;
+  background: #fff;
+  border-radius: 1px;
+  transform: translateY(-50%);
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__::before {
+  left: 14px;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__::after {
+  left: 22px;
+}
+
+/* Resume (play) icon: replaces the two bars with a single white triangle */
+#__rec_ext_overlay__ .__rec_ext_pause__.__rec_ext_resume__ {
+  background: #2e9e44;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__.__rec_ext_resume__:hover {
+  background: #26833a;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__.__rec_ext_resume__::after {
+  content: none;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__.__rec_ext_resume__::before {
+  content: '';
+  width: 0;
+  height: 0;
+  left: 16px;
+  background: none;
+  border-radius: 0;
+  border-style: solid;
+  border-width: 8px 0 8px 13px;
+  border-color: transparent transparent transparent #fff;
+  transform: translateY(-50%);
 }
 
 /* Briefly highlights the clicked element so the captured screenshot shows

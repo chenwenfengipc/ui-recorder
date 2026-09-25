@@ -22,7 +22,7 @@ const MIN_CAPTURE_INTERVAL_MS = 550; // stay under chrome.tabs.captureVisibleTab
 
 async function getState() {
   const { recorderState } = await chrome.storage.session.get('recorderState');
-  return recorderState || { recording: false, mode: null, targetTabId: null };
+  return recorderState || { recording: false, mode: null, targetTabId: null, paused: false };
 }
 
 async function setState(partial) {
@@ -187,7 +187,7 @@ async function startRecording() {
     return { ok: false, error: response?.error || 'Recording was not started (picker cancelled?).' };
   }
 
-  await setState({ recording: true, mode: 'video', targetTabId: activeTab?.id ?? null });
+  await setState({ recording: true, mode: 'video', targetTabId: activeTab?.id ?? null, paused: false });
 
   if (activeTab?.id) {
     try {
@@ -212,6 +212,38 @@ async function stopRecording() {
   return { ok: true };
 }
 
+async function pauseRecording() {
+  const state = await getState();
+  if (!state.recording || state.mode !== 'video' || state.paused) {
+    return { ok: false, error: 'Not recording.' };
+  }
+
+  await chrome.runtime.sendMessage({ type: 'offscreen-pause-capture' }).catch(() => {});
+  await setState({ paused: true });
+
+  if (state.targetTabId) {
+    chrome.tabs.sendMessage(state.targetTabId, { type: 'recording-paused' }).catch(() => {});
+  }
+
+  return { ok: true };
+}
+
+async function resumeRecording() {
+  const state = await getState();
+  if (!state.recording || state.mode !== 'video' || !state.paused) {
+    return { ok: false, error: 'Not paused.' };
+  }
+
+  await chrome.runtime.sendMessage({ type: 'offscreen-resume-capture' }).catch(() => {});
+  await setState({ paused: false });
+
+  if (state.targetTabId) {
+    chrome.tabs.sendMessage(state.targetTabId, { type: 'recording-resumed' }).catch(() => {});
+  }
+
+  return { ok: true };
+}
+
 async function handleCaptureStopped(blobUrl) {
   const state = await getState();
   const filename = `recordings/recording-${timestamp()}.webm`;
@@ -227,7 +259,7 @@ async function handleCaptureStopped(blobUrl) {
     chrome.tabs.sendMessage(state.targetTabId, { type: 'hide-overlay' }).catch(() => {});
   }
 
-  await setState({ recording: false, mode: null, targetTabId: null });
+  await setState({ recording: false, mode: null, targetTabId: null, paused: false });
   await closeOffscreenDocument();
 }
 
@@ -236,7 +268,7 @@ async function handleCaptureError() {
   if (state.targetTabId) {
     chrome.tabs.sendMessage(state.targetTabId, { type: 'hide-overlay' }).catch(() => {});
   }
-  await setState({ recording: false, mode: null, targetTabId: null });
+  await setState({ recording: false, mode: null, targetTabId: null, paused: false });
   await closeOffscreenDocument();
 }
 
@@ -299,10 +331,16 @@ async function processStepClick(tab, description) {
 // Serializes captures (chrome.tabs.captureVisibleTab must run one at a time
 // anyway) and reports success/failure back to the click that triggered it,
 // instead of only logging to the (usually never opened) service worker
-// console.
+// console. Also re-checks the paused flag server-side — the content script
+// removes its own click listener while paused, but this is a safety net for
+// a click already in flight (double rAF) at the exact moment Pause fires.
 function enqueueStepClick(tab, description) {
   const result = captureQueue
-    .then(() => processStepClick(tab, description))
+    .then(async () => {
+      const state = await getState();
+      if (state.paused) return;
+      return processStepClick(tab, description);
+    })
     .then(() => ({ ok: true }))
     .catch((err) => {
       console.error('[UI Recorder] step capture failed:', err);
@@ -355,7 +393,7 @@ async function startStepCapture() {
   // I active?" almost immediately, and it needs to already see this session
   // as active by the time that question arrives.
   await saveStepSession({ startedAt: Date.now(), steps: [] });
-  await setState({ recording: true, mode: 'steps', targetTabId: activeTab.id });
+  await setState({ recording: true, mode: 'steps', targetTabId: activeTab.id, paused: false });
 
   try {
     await registerStepTrackerScript();
@@ -363,9 +401,39 @@ async function startStepCapture() {
     await chrome.scripting.executeScript({ target: { tabId: activeTab.id }, files: [STEP_RECORDER_JS] });
   } catch (err) {
     await unregisterStepTrackerScript();
-    await setState({ recording: false, mode: null, targetTabId: null });
+    await setState({ recording: false, mode: null, targetTabId: null, paused: false });
     await chrome.storage.local.remove('stepSession');
     return { ok: false, error: 'This page cannot be scripted (chrome:// pages, the Web Store, etc).' };
+  }
+
+  return { ok: true };
+}
+
+async function pauseStepCapture() {
+  const state = await getState();
+  if (!state.recording || state.mode !== 'steps' || state.paused) {
+    return { ok: false, error: 'Not capturing.' };
+  }
+
+  await setState({ paused: true });
+
+  if (state.targetTabId) {
+    chrome.tabs.sendMessage(state.targetTabId, { type: 'step-capture-paused' }).catch(() => {});
+  }
+
+  return { ok: true };
+}
+
+async function resumeStepCapture() {
+  const state = await getState();
+  if (!state.recording || state.mode !== 'steps' || !state.paused) {
+    return { ok: false, error: 'Not paused.' };
+  }
+
+  await setState({ paused: false });
+
+  if (state.targetTabId) {
+    chrome.tabs.sendMessage(state.targetTabId, { type: 'step-capture-resumed' }).catch(() => {});
   }
 
   return { ok: true };
@@ -488,7 +556,7 @@ async function stopStepCapture() {
     chrome.tabs.sendMessage(state.targetTabId, { type: 'hide-overlay' }).catch(() => {});
   }
 
-  await setState({ recording: false, mode: null, targetTabId: null });
+  await setState({ recording: false, mode: null, targetTabId: null, paused: false });
 
   await captureQueue; // let any in-flight capture finish before exporting
   const session = await getStepSession();
@@ -508,11 +576,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case 'stop-recording':
       stopRecording().then(sendResponse);
       return true;
+    case 'pause-recording':
+      pauseRecording().then(sendResponse);
+      return true;
+    case 'resume-recording':
+      resumeRecording().then(sendResponse);
+      return true;
     case 'start-step-capture':
       startStepCapture().then(sendResponse);
       return true;
     case 'stop-step-capture':
       stopStepCapture().then(sendResponse);
+      return true;
+    case 'pause-step-capture':
+      pauseStepCapture().then(sendResponse);
+      return true;
+    case 'resume-step-capture':
+      resumeStepCapture().then(sendResponse);
       return true;
     case 'get-status':
       getState().then(sendResponse);
@@ -554,7 +634,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           return;
         }
         const session = await getStepSession();
-        sendResponse({ active: true, count: session.steps.length });
+        sendResponse({ active: true, count: session.steps.length, paused: state.paused });
       })();
       return true;
     default:

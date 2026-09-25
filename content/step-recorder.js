@@ -9,26 +9,31 @@
 
   chrome.runtime.sendMessage({ type: 'step-recorder-ready' }, (response) => {
     if (chrome.runtime.lastError || !response || !response.active) return;
-    initOverlay(response.count || 0);
+    initOverlay(response.count || 0, !!response.paused);
   });
 
-  function initOverlay(initialCount) {
+  function initOverlay(initialCount, initialPaused) {
     if (document.getElementById('__rec_ext_overlay__')) return;
 
     const bar = document.createElement('div');
     bar.id = '__rec_ext_overlay__';
     bar.innerHTML = `
+      <button type="button" id="__rec_ext_pause_btn__" class="__rec_ext_pause__" aria-label="Pause step capture"></button>
       <button type="button" id="__rec_ext_stop_btn__" aria-label="Stop step capture"></button>
     `;
     document.documentElement.appendChild(bar);
 
+    const pauseBtn = document.getElementById('__rec_ext_pause_btn__');
     const stopBtn = document.getElementById('__rec_ext_stop_btn__');
     let lastCount = initialCount;
+    let paused = initialPaused;
     let errorTimeout;
 
     function updateCount(count) {
       lastCount = count;
-      stopBtn.title = `Capturing steps (${count}) — click to stop, or press Esc`;
+      if (!paused) {
+        stopBtn.title = `Capturing steps (${count}) — click to stop, or press Esc`;
+      }
       stopBtn.classList.remove('__rec_ext_error__');
     }
 
@@ -44,6 +49,27 @@
       chrome.runtime.sendMessage({ type: 'stop-step-capture' });
     }
 
+    function setPausedUI(isPaused) {
+      paused = isPaused;
+      pauseBtn.classList.toggle('__rec_ext_resume__', isPaused);
+      pauseBtn.title = isPaused ? 'Resume step capture' : 'Pause step capture';
+      pauseBtn.setAttribute('aria-label', isPaused ? 'Resume step capture' : 'Pause step capture');
+      stopBtn.title = isPaused
+        ? `Paused (${lastCount} step${lastCount === 1 ? '' : 's'} so far) — click Stop to finish, or press Esc`
+        : `Capturing steps (${lastCount}) — click to stop, or press Esc`;
+
+      if (isPaused) {
+        document.removeEventListener('click', onClick, true);
+      } else {
+        document.addEventListener('click', onClick, true);
+      }
+    }
+
+    function togglePause() {
+      chrome.runtime.sendMessage({ type: paused ? 'resume-step-capture' : 'pause-step-capture' });
+    }
+
+    pauseBtn.addEventListener('click', togglePause);
     stopBtn.addEventListener('click', stopCapture);
 
     function onKeydown(event) {
@@ -113,8 +139,6 @@
       });
     }
 
-    document.addEventListener('click', onClick, true);
-
     chrome.runtime.onMessage.addListener((message) => {
       if (message.type === 'hide-overlay') {
         document.removeEventListener('keydown', onKeydown, true);
@@ -124,9 +148,14 @@
         updateCount(message.count);
       } else if (message.type === 'step-error') {
         showError(message.error);
+      } else if (message.type === 'step-capture-paused') {
+        setPausedUI(true);
+      } else if (message.type === 'step-capture-resumed') {
+        setPausedUI(false);
       }
     });
 
+    setPausedUI(initialPaused);
     updateCount(initialCount);
   }
 })();

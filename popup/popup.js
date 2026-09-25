@@ -8,8 +8,15 @@ const driveStatusEl = document.getElementById('driveStatus');
 
 function render(state) {
   const recording = !!state?.recording;
-  const label = state?.mode === 'steps' ? 'Capturing steps…' : recording ? 'Recording…' : 'Not recording';
+  const paused = !!state?.paused;
+
+  const label = state?.mode === 'steps'
+    ? 'Capturing steps…'
+    : recording
+      ? (paused ? 'Paused' : 'Recording…')
+      : 'Not recording';
   statusEl.textContent = label;
+
   startBtn.hidden = recording;
   startStepsBtn.hidden = recording;
   stopBtn.hidden = !recording;

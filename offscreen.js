@@ -11,6 +11,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       stopCapture();
       sendResponse({ ok: true });
       return false;
+    case 'offscreen-pause-capture':
+      pauseCapture();
+      sendResponse({ ok: true });
+      return false;
+    case 'offscreen-resume-capture':
+      resumeCapture();
+      sendResponse({ ok: true });
+      return false;
     case 'release-blob-url':
       URL.revokeObjectURL(message.blobUrl);
       return false;
@@ -80,6 +88,18 @@ function stopCapture() {
     mediaRecorder.stop();
   } else if (activeStream) {
     activeStream.getTracks().forEach((track) => track.stop());
+  }
+}
+
+function pauseCapture() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.pause();
+  }
+}
+
+function resumeCapture() {
+  if (mediaRecorder && mediaRecorder.state === 'paused') {
+    mediaRecorder.resume();
   }
 }
 

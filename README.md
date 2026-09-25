@@ -31,10 +31,26 @@ popup also shows Drive's status: not set up yet, set up but not signed in, or
 connected. A desktop notification confirms upload success/failure — either
 way, the local copy is already saved regardless of Drive's state.
 
-While a capture is running, the floating control on the page is a single
-translucent stop button (50% opacity, full opacity on hover) — hover or
-long-press it to see recording/step-count details as a tooltip, click it or
-press Esc to stop.
+While a capture is running, the floating control on the page is a
+translucent stop button (50% opacity, full opacity on hover) — hover it to
+see recording/step-count details as a tooltip, click it or press Esc to stop.
+**Video recording** also gets a second, blue Pause button next to it on the
+page overlay (there's no Pause in the popup — only on-page, beside Stop) —
+pauses/resumes the same in-progress recording via
+`MediaRecorder.pause()`/`.resume()`, so you can stop capturing while you get
+the right window/tab set up on screen, without that setup being in the final
+video. It's the same recording resumed, not a new source pick — Chrome's
+native screen-share indicator stays active the whole time since the
+underlying capture never actually stops. The popup still shows "Paused" as
+status text while it's paused, just with no button for it there.
+
+**Step-by-step capture** gets the same blue Pause button beside Stop.
+Pausing there stops listening for clicks (so browsing around to find the
+right spot doesn't get documented as steps) without ending the session — the
+step count, and everything captured so far, is untouched. Resuming picks the
+click listener back up. This state (paused or not, and the running count)
+survives navigating to a new page mid-session, same as the rest of step
+capture's multi-page support.
 
 ## One-time setup: Google Drive upload
 
