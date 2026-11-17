@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UI Recorder — User Manual</title>
+<style>
+  :root {
+    --ink: #1d2433;
+    --muted: #5b6474;
+    --line: #dfe3ea;
+    --soft: #f4f6fa;
+    --accent: #2d6cdf;
+    --accent-ink: #1f4fa8;
+    --green: #2e9e44;
+    --warn-bg: #fff6e5;
+    --warn-line: #f5a623;
+    --tip-bg: #eaf7ee;
+    --tip-line: #2e9e44;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: #fff;
+    color: var(--ink);
+    font: 16px/1.6 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 0 24px 64px; }
+  h1, h2, h3 { line-height: 1.25; }
+  h2 {
+    font-size: 26px; margin: 56px 0 12px; padding-top: 8px;
+    border-top: 3px solid var(--accent); color: var(--ink);
+  }
+  h3 { font-size: 19px; margin: 28px 0 8px; color: var(--accent-ink); }
+  p, li { margin: 8px 0; }
+  ol, ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+  a { color: var(--accent-ink); }
+  code, kbd {
+    font-family: Consolas, "Courier New", monospace; font-size: 14px;
+    background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+  }
+  kbd { border-bottom-width: 2px; }
+  pre {
+    background: var(--soft); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 14px; overflow-x: auto; font-size: 13.5px; line-height: 1.5;
+  }
+  pre code { background: none; border: 0; padding: 0; }
+
+  /* cover */
+  .cover {
+    min-height: 92vh; display: flex; flex-direction: column; justify-content: center;
+    padding: 0 24px; max-width: 860px; margin: 0 auto;
+  }
+  .cover .badge {
+    display: inline-block; width: 56px; height: 56px; border-radius: 50%;
+    background: #1f1f1f; box-shadow: inset 0 0 0 10px #ff4747; margin-bottom: 28px;
+  }
+  .cover h1 { font-size: 46px; margin: 0 0 10px; letter-spacing: -0.5px; }
+  .cover .sub { font-size: 20px; color: var(--muted); margin: 0 0 36px; }
+  .cover .meta { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* contents */
+  nav.toc { border: 1px solid var(--line); border-radius: 10px; padding: 18px 24px; background: var(--soft); }
+  nav.toc h2 { border: 0; margin: 0 0 6px; padding: 0; font-size: 20px; }
+  nav.toc ol { margin: 0; padding-left: 22px; columns: 2; column-gap: 32px; }
+  nav.toc li { break-inside: avoid; }
+
+  /* what the main pieces are */
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+  .mode { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .mode h3 { margin-top: 0; }
+  .mode .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 15px; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--soft); }
+
+  figure { margin: 18px 0 22px; }
+  figure img {
+    display: block; max-width: 100%; height: auto;
+    border: 1px solid var(--line); border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(20, 30, 50, 0.08);
+  }
+  figcaption { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+  .note, .tip, .privacy {
+    border-radius: 8px; padding: 12px 16px; margin: 16px 0; border-left: 4px solid;
+  }
+  .note { background: var(--soft); border-color: var(--accent); }
+  .tip { background: var(--tip-bg); border-color: var(--tip-line); }
+  .privacy { background: var(--warn-bg); border-color: var(--warn-line); }
+  .note strong, .tip strong, .privacy strong { display: block; margin-bottom: 2px; }
+
+  .step-no {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff;
+    font-weight: 700; font-size: 14px; margin-right: 8px; vertical-align: 1px;
+  }
+  .tree { font-family: Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.5; }
+
+  footer { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 14px; color: var(--muted); font-size: 14px; }
+
+  /* printing / PDF */
+  @page { size: A4; margin: 16mm 14mm 18mm; }
+  @media print {
+    main { max-width: none; padding: 0; }
+    .cover { min-height: auto; padding: 40mm 0 10mm; }
+    h2 { break-after: avoid; }
+    h3 { break-after: avoid; }
+    figure, .note, .tip, .privacy, table, .modes { break-inside: avoid; }
+    .page-break { break-before: page; }
+    nav.toc { break-after: page; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="badge" aria-hidden="true"></div>
+  <h1>UI Recorder</h1>
+  <p class="sub">User Manual — record your screen, or turn any click-through into a step-by-step guide.</p>
+  <div class="meta">Version {{VERSION}} &nbsp;·&nbsp; Works in Google Chrome and Microsoft Edge &nbsp;·&nbsp; Support: <span>&lt;YOUR SUPPORT EMAIL&gt;</span></div>
+</section>
+
+<main>
+
+<nav class="toc" aria-label="Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#overview">What UI Recorder does</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#open">Open the menu</a></li>
+    <li><a href="#video">Record a video</a></li>
+    <li><a href="#steps">Capture a step-by-step guide</a></li>
+    <li><a href="#review">Review your steps</a></li>
+    <li><a href="#files">Find and share your files</a></li>
+    <li><a href="#tips">Tips for great guides</a></li>
+    <li><a href="#limits">Things to know</a></li>
+    <li><a href="#trouble">Troubleshooting</a></li>
+    <li><a href="#privacy">Privacy</a></li>
+    <li><a href="#shortcuts">Quick reference</a></li>
+  </ol>
+</nav>
+
+<h2 id="overview">1. What UI Recorder does</h2>
+<p>UI Recorder has two capture modes. Pick the one that fits the job:</p>
+<div class="modes">
+  <div class="mode">
+    <h3>Start Recording</h3>
+    <p>Records a <strong>video</strong> of a browser tab, an application window, or your whole screen.</p>
+    <p><strong>Output:</strong> a <code>.webm</code> video file.</p>
+    <p><strong>Good for:</strong> demos, walkthroughs, meetings.</p>
+  </div>
+  <div class="mode">
+    <h3>Start Step-by-Step Capture</h3>
+    <p>Takes a <strong>screenshot at every click</strong>, highlights what you clicked, and writes a caption such as “Click Save”.</p>
+    <p><strong>Output:</strong> a numbered guide (<code>index.html</code> plus one PNG per step).</p>
+    <p><strong>Good for:</strong> how-to guides, procedures (SOPs), bug reports.</p>
+  </div>
+</div>
+<p>Both modes are started from the toolbar icon. Nothing is recorded until you press a start button.</p>
+
+<h2 id="install">2. Install</h2>
+<ol>
+  <li>Open the <strong>Chrome Web Store</strong> and search for <strong>UI Recorder</strong>.</li>
+  <li>Click <strong>Add to Chrome</strong>, then <strong>Add extension</strong>.</li>
+  <li>Click the puzzle-piece icon in the toolbar and <strong>pin</strong> UI Recorder so its icon stays visible.</li>
+</ol>
+<p>No account or sign-up is needed.</p>
+
+<h2 id="open">3. Open the menu</h2>
+<p>Click the UI Recorder icon in the toolbar.</p>
+<figure>
+  {{img:01-popup.png}}
+  <figcaption>The UI Recorder menu. <strong>Start Recording</strong> is the green button; <strong>Start Step-by-Step Capture</strong> is the blue one.</figcaption>
+</figure>
+<ul>
+  <li><strong>Start Recording</strong> — video of a tab, window or screen.</li>
+  <li><strong>Start Step-by-Step Capture</strong> — a screenshot for every click.</li>
+  <li><strong>Review captured steps (N)</strong> — appears only when a step capture is waiting for you to review it.</li>
+</ul>
+<p>While something is being captured, the menu shows the current status and a <strong>Stop</strong> button:</p>
+<figure>
+  {{img:02-popup-recording.png}}
+  <figcaption>The menu while a capture is running.</figcaption>
+</figure>
+
+<h2 id="video">4. Record a video</h2>
+<ol>
+  <li>Click <strong>Start Recording</strong>.</li>
+  <li>Chrome asks <strong>what to share</strong>. Choose <strong>Chrome Tab</strong>, <strong>Window</strong> or <strong>Entire Screen</strong>, select the one you want, and click <strong>Share</strong>.
+    <ul>
+      <li>To include sound, tick <strong>Also share tab audio</strong> (for a tab) or <strong>Also share system audio</strong> (for a screen).</li>
+    </ul>
+  </li>
+  <li>Work as normal. A small floating control appears in the <strong>top-right corner</strong> of the page you started from:
+    <figure>
+      {{img:03-floating-buttons.png}}
+      <figcaption>The floating controls: <strong>Pause</strong> (left) and <strong>Stop</strong> (right).</figcaption>
+    </figure>
+    <ul>
+      <li><strong>Pause / Resume</strong> — hold the recording while you set something up, then continue. Paused time is not included in the video.</li>
+      <li><strong>Stop</strong> — finish the recording. You can also press <kbd>Esc</kbd>.</li>
+    </ul>
+  </li>
+  <li>When you stop, the video is saved automatically. See <a href="#files">Find and share your files</a>.</li>
+</ol>
+<div class="note">
+  <strong>Note</strong>
+  The floating controls are semi-transparent so they stay out of the way. They become fully visible when you hover over them.
+  When you record a window or the whole screen, the controls stay on the page you started from. If you move to another
+  application, press <kbd>Esc</kbd> or use <strong>Stop</strong> in the toolbar menu.
+</div>
+
+<h2 id="steps">5. Capture a step-by-step guide</h2>
+<ol>
+  <li>Open the page where your process begins, and log in <em>before</em> you start.</li>
+  <li>Click the UI Recorder icon, then <strong>Start Step-by-Step Capture</strong>.</li>
+  <li>A small Pause and Stop control appears on the page. <strong>Now do the task</strong>: click through it the way you normally would.</li>
+  <li>UI Recorder takes a screenshot at every click, draws a highlight box around the thing you clicked, and writes a caption such as <em>“Click Save”</em>.</li>
+</ol>
+<figure>
+  {{img:04-step-highlight.png}}
+  <figcaption>A captured step. The clicked button is outlined in red, and the caption describes the action.</figcaption>
+</figure>
+
+<h3>What the capture handles for you</h3>
+<ul>
+  <li><strong>Pages that are still loading.</strong> If a click opens a new page, the screenshot for that step is taken once the page has finished loading, not while it is blank.</li>
+  <li><strong>Pop-ups and dialogs.</strong> When a click opens a dialog, a drawer or a cookie banner, the step shows it open.
+    <figure>
+      {{img:05-dialog-open.png}}
+      <figcaption>A dialog captured open after a click.</figcaption>
+    </figure>
+  </li>
+  <li><strong>Chat widgets and embedded content</strong> inside iframes are recorded too.
+    <figure>
+      {{img:06-chat-widget.png}}
+      <figcaption>A click inside a chat widget.</figcaption>
+    </figure>
+  </li>
+  <li><strong>Single-page apps and multi-page sites.</strong> The capture keeps going as you move between pages in the same tab.</li>
+</ul>
+
+<h3>Pause and resume</h3>
+<p>Click the <strong>Pause</strong> button on the page when you need to do something you do not want in the guide, for example signing in with personal details. Click <strong>Resume</strong> to continue. Clicks made while paused are not captured.</p>
+
+<h3>Finish</h3>
+<p>Click <strong>Stop</strong> on the page, press <kbd>Esc</kbd>, or use <strong>Stop</strong> in the toolbar menu. Your steps are not exported yet. The review page opens next.</p>
+
+<div class="privacy">
+  <strong>Privacy</strong>
+  Only clicks are recorded. What you type is never stored, and password fields are never read. If a screenshot would show
+  something sensitive, delete that step on the review page.
+</div>
+
+<h2 id="review">6. Review your steps</h2>
+<p>After you stop, the <strong>review page</strong> opens with every screenshot as a card.</p>
+<figure>
+  {{img:07-review-page.png}}
+  <figcaption>The review page. Drag cards to reorder them, and use ✕ to delete a step.</figcaption>
+</figure>
+<table>
+  <thead><tr><th>To…</th><th>Do this</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Reorder</strong></td><td>Drag a card to a new position (a blue bar shows where it will land), or use the <strong>◀ ▶</strong> buttons on the card. Step numbers update as you move.</td></tr>
+    <tr><td><strong>Delete</strong></td><td>Click <strong>✕</strong> on the card. An <strong>Undo</strong> link stays for 8 seconds.</td></tr>
+    <tr><td><strong>Zoom in</strong></td><td>Click a screenshot to see it at full size. Press <kbd>Esc</kbd> or click again to close.</td></tr>
+    <tr><td><strong>Generate</strong></td><td>Click <strong>Generate guide</strong>. The guide is written in the order shown, numbered 1, 2, 3 …</td></tr>
+    <tr><td><strong>Start over</strong></td><td>Click <strong>Discard all</strong>. The captured steps are deleted.</td></tr>
+  </tbody>
+</table>
+<div class="tip">
+  <strong>Tip</strong>
+  Your edits are saved as you make them. If you close the review tab by accident, open the toolbar menu and click
+  <strong>Review captured steps (N)</strong> to return to it. You cannot start a new step capture until the pending one is
+  generated or discarded.
+</div>
+
+<h2 id="files">7. Find and share your files</h2>
+<p>Everything is saved in your browser’s <strong>Downloads</strong> folder, inside a folder called <strong>recordings</strong>:</p>
+<pre class="tree"><code>Downloads/
+└── recordings/
+    ├── recording-2026-10-19T07-35-27.webm     ← video recordings
+    └── steps-2026-10-19T07-40-02/             ← one folder per guide
+        ├── index.html                          ← open this to read the guide
+        ├── step-01.png
+        ├── step-02.png
+        └── …</code></pre>
+<p>The generated guide is an ordinary web page. Each step shows its number, caption and screenshot:</p>
+<figure>
+  {{img:08-generated-guide.png}}
+  <figcaption>The generated guide, opened in a browser.</figcaption>
+</figure>
+<h3>Sharing a guide</h3>
+<ul>
+  <li><strong>Print or save as PDF</strong> — open <code>index.html</code>, press <kbd>Ctrl</kbd>+<kbd>P</kbd> (<kbd>Cmd</kbd>+<kbd>P</kbd> on a Mac), then choose <em>Save as PDF</em>.</li>
+  <li><strong>Send it</strong> — zip the whole <code>steps-…</code> folder and email or upload it. Keep <code>index.html</code> and the PNG files together, or the pictures will not show.</li>
+  <li><strong>Edit the wording</strong> — open <code>index.html</code> in any text editor and change the captions.</li>
+</ul>
+<h3>Playing a video</h3>
+<p>Videos are saved in WebM format, an open video format. Drag the file into a browser tab to play it. If another player does not open it, convert the file to MP4 with a free converter.</p>
+
+<h2 id="tips">8. Tips for great guides</h2>
+<ul>
+  <li><strong>Click deliberately and pause briefly</strong> after each click, so the page can settle. One clean click per action works best.</li>
+  <li><strong>Start on the right page.</strong> Open it and log in before you click Start.</li>
+  <li><strong>Use Pause</strong> for sign-ins, personal data, or anything you do not want in the guide.</li>
+  <li><strong>Close pop-ups with their own close button</strong>, not <kbd>Esc</kbd>. Pressing <kbd>Esc</kbd> stops the capture.</li>
+  <li><strong>Use a normal-sized window.</strong> Screenshots show what the tab displays, so a normal window gives readable pictures.</li>
+  <li><strong>Review everything.</strong> Delete accidental clicks and reorder steps before you generate the guide.</li>
+  <li><strong>Hide sensitive tabs and bookmarks</strong> before recording a window or the whole screen. A video shows exactly what is on screen.</li>
+</ul>
+
+<h2 id="limits">9. Things to know</h2>
+<ul>
+  <li><strong>Step capture records one tab</strong>, the one you started it in. If a click opens a <em>new</em> tab or window, that new tab is not followed. Go back to the original tab, or start a new capture there.</li>
+  <li><strong>Some pages cannot be recorded.</strong> Chrome does not let extensions run on <code>chrome://</code> pages, on other extensions’ pages, or on the Chrome Web Store, so step capture cannot run there. Video recording of a whole screen or window still works.</li>
+  <li><strong>Clicks only.</strong> Typing, scrolling and hovering are not recorded as steps.</li>
+  <li><strong>Esc stops the capture.</strong> It is a quick way out, so it also triggers when you are trying to close a pop-up.</li>
+  <li><strong>Screenshot speed.</strong> Chrome limits how many screenshots an extension can take per second. If you click very quickly, screenshots may be slightly delayed, but every click is still kept.</li>
+  <li><strong>Long recordings</strong> create large files.</li>
+</ul>
+
+<h2 id="trouble">10. Troubleshooting</h2>
+<table>
+  <thead><tr><th>Problem</th><th>What to try</th></tr></thead>
+  <tbody>
+    <tr><td>Nothing happens when I click Start</td><td>Make sure you are on a normal web page, not a <code>chrome://</code> page or the Web Store. Refresh the page and try again.</td></tr>
+    <tr><td>The sharing dialog does not appear</td><td>The dialog appears only for <strong>Start Recording</strong>. Step capture does not need it.</td></tr>
+    <tr><td>A step screenshot shows the page before it loaded</td><td>Wait for the page to settle after a click before clicking again. If a site keeps loading forever (for example live chat or analytics), the screenshot is taken after a short wait.</td></tr>
+    <tr><td>A pop-up is missing from the guide</td><td>Make sure the pop-up opened because of your click. Close it with its own button, not <kbd>Esc</kbd>.</td></tr>
+    <tr><td>I closed the review page by accident</td><td>Click the toolbar icon, then <strong>Review captured steps</strong>.</td></tr>
+    <tr><td>I cannot start a new step capture</td><td>A previous capture is still waiting. Open it from the menu and click <strong>Generate guide</strong> or <strong>Discard all</strong>.</td></tr>
+    <tr><td>I cannot find my files</td><td>Open the downloads list (<kbd>Ctrl</kbd>+<kbd>J</kbd>) or your Downloads folder, then open the <code>recordings</code> folder.</td></tr>
+    <tr><td>The guide’s images are missing</td><td>Keep <code>index.html</code> in the same folder as the <code>step-NN.png</code> files. Do not move them separately.</td></tr>
+  </tbody>
+</table>
+<p>Still stuck? Contact <strong>&lt;YOUR SUPPORT EMAIL&gt;</strong>.</p>
+
+<h2 id="privacy">11. Privacy</h2>
+<ul>
+  <li><strong>Everything stays on your computer.</strong> UI Recorder has no servers, no accounts and no analytics.</li>
+  <li><strong>What is captured:</strong> video and audio of the tab, window or screen you choose; screenshots and short click captions while a step capture runs; and the click position used to draw the highlight.</li>
+  <li><strong>What is not captured:</strong> keystrokes, text you type, password fields, the addresses of the pages you visit, or your browsing history.</li>
+  <li><strong>Where it goes:</strong> only to the Downloads folder you can see. Steps are held temporarily in the extension’s local storage until you generate or discard them.</li>
+</ul>
+<p>The full privacy policy is provided with the extension listing.</p>
+
+<h2 id="shortcuts">12. Quick reference</h2>
+<table>
+  <thead><tr><th>I want to…</th><th>Use</th></tr></thead>
+  <tbody>
+    <tr><td>Start a video</td><td>Toolbar icon → <strong>Start Recording</strong> → pick what to share → <strong>Share</strong></td></tr>
+    <tr><td>Start a step guide</td><td>Toolbar icon → <strong>Start Step-by-Step Capture</strong></td></tr>
+    <tr><td>Pause or resume</td><td>Floating <strong>Pause</strong> button on the page</td></tr>
+    <tr><td>Stop</td><td>Floating <strong>Stop</strong> button, <kbd>Esc</kbd>, or <strong>Stop</strong> in the toolbar menu</td></tr>
+    <tr><td>Come back to unfinished steps</td><td>Toolbar icon → <strong>Review captured steps</strong></td></tr>
+    <tr><td>Print a guide</td><td>Open <code>index.html</code> → <kbd>Ctrl</kbd>+<kbd>P</kbd></td></tr>
+  </tbody>
+</table>
+
+<footer>UI Recorder user manual · Version {{VERSION}} · Support: &lt;YOUR SUPPORT EMAIL&gt;</footer>
+
+</main>
+</body>
+</html>

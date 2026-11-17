@@ -1,0 +1,51 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", system-ui, Arial, sans-serif; background: #f4f6fb; color: #1d2433; }
+.topbar { display: flex; align-items: center; gap: 28px; padding: 0 32px; height: 64px; background: #fff; border-bottom: 1px solid #e3e8f2; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: #1d2433; text-decoration: none; }
+.brand .logo { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
+.nav { display: flex; gap: 6px; }
+.nav a { padding: 8px 14px; border-radius: 8px; color: #55607a; text-decoration: none; font-weight: 600; }
+.nav a.active { background: #eaf1ff; color: #2563eb; }
+.nav a:hover { background: #f0f4fb; }
+.spacer { flex: 1; }
+.user { display: flex; align-items: center; gap: 10px; color: #55607a; font-weight: 600; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: #fde68a; display: grid; place-items: center; color: #92400e; font-weight: 700; }
+main { padding: 32px; max-width: 1180px; margin: 0 auto; }
+h1 { margin: 0 0 4px; font-size: 26px; }
+.sub { margin: 0 0 24px; color: #6b7690; }
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px; }
+.card { background: #fff; border: 1px solid #e3e8f2; border-radius: 14px; padding: 20px; }
+.card .label { color: #6b7690; font-size: 13px; font-weight: 600; }
+.card .value { font-size: 30px; font-weight: 700; margin-top: 6px; }
+.card .delta { color: #16a34a; font-size: 13px; font-weight: 600; margin-top: 4px; }
+.panel { background: #fff; border: 1px solid #e3e8f2; border-radius: 14px; padding: 22px; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.panel-head h2 { margin: 0; font-size: 18px; }
+.btn { display: inline-block; padding: 10px 18px; border: 0; border-radius: 10px; font: inherit; font-weight: 600; cursor: pointer; background: #2563eb; color: #fff; text-decoration: none; }
+.btn:hover { background: #1d4ed8; }
+.btn.ghost { background: #eef2fa; color: #33405c; }
+.btn.ghost:hover { background: #e2e8f5; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #6b7690; padding: 10px 12px; border-bottom: 1px solid #e3e8f2; }
+td { padding: 14px 12px; border-bottom: 1px solid #eef1f7; }
+.pill { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.pill.ok { background: #dcfce7; color: #166534; }
+.pill.low { background: #fef3c7; color: #92400e; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(20, 28, 48, .55); display: none; align-items: center; justify-content: center; z-index: 50; }
+.modal-backdrop.show { display: flex; }
+.modal { width: 520px; background: #fff; border-radius: 16px; box-shadow: 0 24px 64px rgba(0,0,0,.35); overflow: hidden; animation: pop .22s ease-out; }
+@keyframes pop { from { transform: translateY(14px) scale(.97); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #eef1f7; }
+.modal header h3 { margin: 0; font-size: 18px; }
+.modal .close { width: 32px; height: 32px; border: 0; border-radius: 8px; background: #f0f3fa; cursor: pointer; position: relative; }
+.modal .close::before, .modal .close::after { content: ""; position: absolute; left: 9px; top: 15px; width: 14px; height: 2px; background: #55607a; transform: rotate(45deg); }
+.modal .close::after { transform: rotate(-45deg); }
+.modal form { padding: 20px 24px 8px; display: grid; gap: 16px; }
+.field label { display: block; font-size: 13px; font-weight: 600; color: #55607a; margin-bottom: 6px; }
+.field input, .field select { width: 100%; padding: 10px 12px; border: 1px solid #cfd6e6; border-radius: 10px; font: inherit; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.modal footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px 22px; }
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); background: #14213d; color: #fff; padding: 12px 20px; border-radius: 12px; font-weight: 600; opacity: 0; transition: opacity .25s; z-index: 60; }
+.toast.show { opacity: 1; }
+#chat { position: fixed; right: 20px; bottom: 20px; width: 70px; height: 70px; border: 0; background: transparent; z-index: 40; transition: width .2s, height .2s; }
+#chat.open { width: 340px; height: 440px; }

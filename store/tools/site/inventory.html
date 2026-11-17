@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Acme Stock - Inventory</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="index.html"><span class="logo"></span>Acme Stock</a>
+    <nav class="nav">
+      <a href="index.html">Dashboard</a>
+      <a class="active" href="inventory.html">Inventory</a>
+      <a href="reports.html">Reports</a>
+    </nav>
+    <div class="spacer"></div>
+    <div class="user"><span class="avatar">JD</span> Jane Doe</div>
+  </div>
+  <main>
+    <h1>Inventory</h1>
+    <p class="sub">Manage the products in your warehouse.</p>
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Products</h2>
+        <button class="btn" id="add-item">Add item</button>
+      </div>
+      <table>
+        <thead><tr><th>Product</th><th>SKU</th><th>Qty</th><th>Status</th></tr></thead>
+        <tbody id="rows">
+          <tr><td>Wireless keyboard</td><td>KB-1042</td><td>128</td><td><span class="pill ok">In stock</span></td></tr>
+          <tr><td>USB-C dock</td><td>DK-2210</td><td>14</td><td><span class="pill low">Low</span></td></tr>
+          <tr><td>27" monitor</td><td>MN-2701</td><td>63</td><td><span class="pill ok">In stock</span></td></tr>
+          <tr><td>Laptop stand</td><td>LS-0310</td><td>212</td><td><span class="pill ok">In stock</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-label="Add item">
+      <header><h3>Add item</h3><button class="close" id="close-modal" aria-label="Close"></button></header>
+      <form id="item-form" onsubmit="return false">
+        <div class="field"><label for="f-name">Product name</label><input id="f-name" placeholder="e.g. Desk lamp" /></div>
+        <div class="row2">
+          <div class="field"><label for="f-sku">SKU</label><input id="f-sku" placeholder="e.g. DL-0420" /></div>
+          <div class="field"><label for="f-qty">Quantity</label><input id="f-qty" type="number" placeholder="0" /></div>
+        </div>
+        <div class="field"><label for="f-cat">Category</label>
+          <select id="f-cat"><option>Office</option><option>Electronics</option><option>Furniture</option></select></div>
+      </form>
+      <footer><button class="btn ghost" id="cancel-item">Cancel</button><button class="btn" id="save-item">Save item</button></footer>
+    </div>
+  </div>
+  <div class="toast" id="toast">Item added to inventory</div>
+
+  <script>
+    const modal = document.getElementById('modal');
+    const toast = document.getElementById('toast');
+    const open = () => { modal.classList.add('show'); setTimeout(() => document.getElementById('f-name').focus(), 50); };
+    const close = () => modal.classList.remove('show');
+    document.getElementById('add-item').addEventListener('click', open);
+    document.getElementById('close-modal').addEventListener('click', close);
+    document.getElementById('cancel-item').addEventListener('click', close);
+    document.getElementById('save-item').addEventListener('click', () => {
+      const name = document.getElementById('f-name').value || 'Desk lamp';
+      const sku = document.getElementById('f-sku').value || 'DL-0420';
+      const qty = document.getElementById('f-qty').value || '40';
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td></td><td></td><td></td><td><span class="pill ok">In stock</span></td>';
+      tr.children[0].textContent = name; tr.children[1].textContent = sku; tr.children[2].textContent = qty;
+      document.getElementById('rows').prepend(tr);
+      close();
+      toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2600);
+    });
+  </script>
+  <script src="chat-loader.js"></script>
+</body>
+</html>

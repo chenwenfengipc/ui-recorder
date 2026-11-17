@@ -1,0 +1,104 @@
+body {
+  width: 220px;
+  margin: 0;
+  padding: 14px;
+  font: 13px/1.4 -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #fff;
+  color: #1f1f1f;
+}
+
+/* Without this, `display: block` on buttons below overrides the hidden attribute
+   and every button (Stop, Review...) shows all the time. */
+[hidden] {
+  display: none !important;
+}
+
+h1 {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+
+#status {
+  margin: 0 0 10px;
+  color: #555;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #ff4747;
+  color: #fff;
+}
+
+button + button {
+  margin-top: 8px;
+}
+
+#startBtn {
+  background: #2e9e44;
+}
+
+#startBtn:hover {
+  background: #26833a;
+}
+
+#reviewBtn {
+  background: #f5a623;
+  color: #1f1f1f;
+}
+
+#reviewBtn:hover {
+  background: #dd931a;
+}
+
+#startStepsBtn {
+  background: #2d6cdf;
+}
+
+#startStepsBtn:hover {
+  background: #2559ba;
+}
+
+button:hover {
+  background: #e23c3c;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.error {
+  margin-top: 10px;
+  color: #c62828;
+}
+
+.drive-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.drive-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.drive-toggle input {
+  margin: 0;
+}
+
+.drive-status {
+  margin: 6px 0 0;
+  color: #777;
+  font-size: 12px;
+  line-height: 1.4;
+}

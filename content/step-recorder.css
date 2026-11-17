@@ -1,0 +1,134 @@
+#__rec_ext_overlay__ {
+  all: initial;
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 2147483647;
+  display: flex;
+  gap: 8px;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+}
+
+#__rec_ext_overlay__:hover,
+#__rec_ext_overlay__:focus-within {
+  opacity: 1;
+}
+
+#__rec_ext_overlay__ button {
+  position: relative;
+  display: block;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #ff4747;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+#__rec_ext_overlay__ button:hover {
+  background: #e23c3c;
+}
+
+#__rec_ext_overlay__ #__rec_ext_stop_btn__::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 3px;
+  transform: translate(-50%, -50%);
+}
+
+/* Shown briefly (via a class toggle) when a screenshot capture fails. */
+#__rec_ext_overlay__ #__rec_ext_stop_btn__.__rec_ext_error__ {
+  background: #f5a623;
+}
+
+#__rec_ext_overlay__ #__rec_ext_stop_btn__.__rec_ext_error__::before {
+  background: #1f1f1f;
+}
+
+/* A click that loads something is not recorded until the page has finished
+   loading; the pulsing amber button shows that it is waiting. */
+#__rec_ext_overlay__ #__rec_ext_stop_btn__.__rec_ext_waiting__ {
+  background: #f5a623;
+  animation: __rec_ext_wait_pulse__ 1s ease-in-out infinite;
+}
+
+@keyframes __rec_ext_wait_pulse__ {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 9px rgba(245, 166, 35, 0);
+  }
+}
+
+/* Pause icon: two white bars */
+#__rec_ext_overlay__ .__rec_ext_pause__ {
+  background: #2d6cdf;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__:hover {
+  background: #2559ba;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__::before,
+#__rec_ext_overlay__ .__rec_ext_pause__::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 4px;
+  height: 14px;
+  background: #fff;
+  border-radius: 1px;
+  transform: translateY(-50%);
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__::before {
+  left: 14px;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__::after {
+  left: 22px;
+}
+
+/* Resume (play) icon: replaces the two bars with a single white triangle */
+#__rec_ext_overlay__ .__rec_ext_pause__.__rec_ext_resume__ {
+  background: #2e9e44;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__.__rec_ext_resume__:hover {
+  background: #26833a;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__.__rec_ext_resume__::after {
+  content: none;
+}
+
+#__rec_ext_overlay__ .__rec_ext_pause__.__rec_ext_resume__::before {
+  content: '';
+  width: 0;
+  height: 0;
+  left: 16px;
+  background: none;
+  border-radius: 0;
+  border-style: solid;
+  border-width: 8px 0 8px 13px;
+  border-color: transparent transparent transparent #fff;
+  transform: translateY(-50%);
+}
+
+/* Briefly highlights the clicked element so the captured screenshot shows
+   what was clicked. */
+.__rec_ext_click_highlight__ {
+  outline: 3px solid #ff4747 !important;
+  outline-offset: 2px !important;
+  border-radius: 3px !important;
+}

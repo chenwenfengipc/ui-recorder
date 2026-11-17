@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    html, body { margin: 0; height: 100%; background: transparent; font-family: "Segoe UI", system-ui, Arial, sans-serif; }
+    #bubble { position: absolute; right: 0; bottom: 0; width: 60px; height: 60px; border: 0; border-radius: 50%; background: #2563eb; box-shadow: 0 6px 18px rgba(37,99,235,.45); cursor: pointer; color: #fff; font-size: 26px; }
+    #panel { display: none; position: absolute; inset: 0 0 74px 0; background: #fff; border-radius: 16px; box-shadow: 0 16px 48px rgba(0,0,0,.28); overflow: hidden; flex-direction: column; }
+    body.open #panel { display: flex; }
+    body.open #bubble { display: none; }
+    .head { background: #2563eb; color: #fff; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
+    .head button { border: 0; width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,.2); color: #fff; font-size: 16px; cursor: pointer; }
+    .msgs { flex: 1; padding: 14px; background: #f6f8fd; font-size: 14px; }
+    .bot { background: #fff; border: 1px solid #e3e8f2; border-radius: 12px; padding: 10px 12px; max-width: 80%; margin-bottom: 10px; }
+    .me { background: #2563eb; color: #fff; border-radius: 12px; padding: 10px 12px; max-width: 80%; margin: 0 0 10px auto; }
+    .quick { display: flex; gap: 8px; padding: 10px 14px; background: #f6f8fd; }
+    .quick button { flex: 1; border: 1px solid #c7d4f0; background: #fff; border-radius: 999px; padding: 8px; font: inherit; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <button id="bubble" aria-label="Open chat">?</button>
+  <div id="panel">
+    <div class="head"><span>Acme support</span><button id="chat-close" aria-label="Close chat">x</button></div>
+    <div class="msgs" id="msgs"><div class="bot">Hi! How can we help you today?</div></div>
+    <div class="quick"><button id="q-stock">Check stock</button><button id="q-human">Talk to a person</button></div>
+  </div>
+  <script>
+    var send = function (state) { window.parent.postMessage({ chatWidget: state }, '*'); };
+    document.getElementById('bubble').addEventListener('click', function () { document.body.classList.add('open'); send('open'); });
+    document.getElementById('chat-close').addEventListener('click', function () { document.body.classList.remove('open'); send('closed'); });
+    document.getElementById('q-stock').addEventListener('click', function () {
+      var m = document.getElementById('msgs');
+      m.insertAdjacentHTML('beforeend', '<div class="me">Check stock</div><div class="bot">You have 1,284 items in stock.</div>');
+    });
+  </script>
+</body>
+</html>

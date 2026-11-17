@@ -1,0 +1,9 @@
+# Saved pages used as references while debugging. They contain access/refresh tokens in their URLs:
+# never commit or publish them.
+sample/
+
+# Build output
+dist/
+
+# Scratch space of the store-asset tooling (browser profile, raw captures, downloads)
+store/tools/.work/
