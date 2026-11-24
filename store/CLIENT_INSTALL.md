@@ -45,7 +45,7 @@ The UI Recorder icon now stays visible. Click it to open the menu.
 ## 4. Check that it works
 
 1. Open any normal website, for example https://example.com.
-2. Click the UI Recorder icon, then **Start Step-by-Step Capture**.
+2. Click the UI Recorder icon, then **Start Step-by-Step Capture**. The first time, Chrome asks whether UI Recorder may read and change data on the websites you visit. Choose **Allow**. You are asked only once, and recording is not possible without it.
 3. Click something on the page. A small Pause/Stop control appears at the top right of the page.
 4. Click **Stop** on the page. A review page opens with a screenshot of your click.
 5. Click **Generate guide**. The files are saved to **Downloads → recordings → steps-<date>**.

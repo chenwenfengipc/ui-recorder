@@ -1,0 +1,39 @@
+PERMISSION JUSTIFICATIONS (paste each text into the matching field in the Chrome Web Store dashboard)
+
+Before you start: if Google Drive is NOT part of this release, remove "identity" from the manifest together with the "oauth2" block, and skip item 6. Google will then not ask for it.
+
+
+1. offscreen
+Chrome requires screen, window and tab recording (getDisplayMedia with MediaRecorder) to run in an offscreen document, because a Manifest V3 service worker cannot use these APIs. The offscreen document is created only when the user presses Start Recording, uses Chrome's own sharing dialog to record what the user selects, and is closed when the recording stops.
+
+
+2. downloads
+Saves only the files the user asks for into their Downloads folder, in a "recordings" subfolder: the video file after a video recording, and the screenshots and index.html of a step guide after the user presses Generate guide. Nothing else is downloaded.
+
+
+3. scripting
+Shows the on-page Pause and Stop controls and detects the user's clicks in the tab being documented. The recorder script is injected only after the user presses Start Step-by-Step Capture, into that tab and its frames (so dialogs and chat widgets inside iframes can be recorded), and it is removed when the capture stops. It reads only the label of the element the user clicks, to write the step caption. It never reads typed values or password fields, and it ignores all other tabs.
+
+
+4. storage
+Session storage holds the capture state (recording, paused, mode) so the toolbar menu and on-page controls stay correct. Local storage holds the steps of a step capture (screenshots and captions) until the user presses Generate guide or Discard. Nothing is sent off the user's device.
+
+
+5. unlimitedStorage
+A step capture keeps one screenshot per click until the user reviews and generates the guide. A long capture can exceed the default extension storage limit, and this permission stops captured steps from being lost. The data stays on the user's device and is deleted when the guide is generated or discarded.
+
+
+6. identity (ONLY if Google Drive stays in the release)
+Used only for the optional "Also save to Google Drive" setting, which is off by default. When the user turns it on and signs in, the extension uploads the user's own recordings and guides to their own Google Drive, using the drive.file scope. That scope only gives access to files the extension itself creates. The permission is not used for anything else.
+
+
+7. notifications
+Shows a desktop notification when a recording or step guide has been saved, when a capture could not be completed, or when no steps were captured. This tells the user the result after the toolbar menu has closed. No other notifications are sent.
+
+
+8. webRequest
+Used in observe-only mode, to learn when the page the user is documenting has finished loading, so each step's screenshot is taken after the page has loaded and not while it is blank. It does not block, change or read the content of any request or response. It watches only the tab being captured, only while a step capture is running. The request addresses are used in memory for this decision and are never stored or sent anywhere.
+
+
+9. Host permission (<all_urls>)
+This is an OPTIONAL host permission: it is not granted at install time. The first time the user presses Start Recording or Start Step-by-Step Capture, Chrome asks them to allow access to websites, and the extension can only start after they allow it. Access is needed because the user can document any website or web application, so the on-page controls and click detection must work on any site they choose. The extension only acts in the tab (and its frames) the user started, ignores all other tabs, and does not read or send page content. Video recording of a tab, window or screen goes through Chrome's own sharing dialog.

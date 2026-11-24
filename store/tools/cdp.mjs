@@ -47,15 +47,21 @@ export function findBrowser() {
   return found;
 }
 
-export async function launchChrome({ extensionPath, userDataDir, port = 9333, extraArgs = [], downloadDir }) {
-  fs.rmSync(userDataDir, { recursive: true, force: true });
+// keepProfile: reuse an existing profile (its granted site access survives); headless: false shows the window.
+export async function launchChrome({ extensionPath, userDataDir, port = 9333, extraArgs = [], downloadDir, keepProfile = false, headless = true }) {
+  if (!keepProfile) fs.rmSync(userDataDir, { recursive: true, force: true });
   if (downloadDir) {
+    // Merge into any existing Preferences so a kept profile keeps everything else it has.
     fs.mkdirSync(path.join(userDataDir, 'Default'), { recursive: true });
-    fs.writeFileSync(path.join(userDataDir, 'Default', 'Preferences'), JSON.stringify({ download: { default_directory: downloadDir, prompt_for_download: false, directory_upgrade: true } }));
+    const file = path.join(userDataDir, 'Default', 'Preferences');
+    let prefs = {};
+    try { prefs = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) { /* new profile */ }
+    prefs.download = { default_directory: downloadDir, prompt_for_download: false, directory_upgrade: true };
+    fs.writeFileSync(file, JSON.stringify(prefs));
   }
   const chrome = findBrowser();
   const args = [
-    '--headless=new',
+    ...(headless ? ['--headless=new'] : []),
     `--remote-debugging-port=${port}`,
     `--user-data-dir=${userDataDir}`,
     '--no-first-run',

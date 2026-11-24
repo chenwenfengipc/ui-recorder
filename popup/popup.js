@@ -35,8 +35,20 @@ async function refresh() {
 }
 
 async function start(type, button) {
+  // Website access is optional at install time, so the first Start asks for it.
+  // This call has to come before any await: Chrome only shows the prompt for a
+  // direct click. If access was already granted, it resolves without a prompt.
+  const access = chrome.permissions.request({ origins: ['<all_urls>'] });
   errorEl.hidden = true;
   button.disabled = true;
+  const granted = await access.catch(() => false);
+  if (!granted) {
+    button.disabled = false;
+    errorEl.textContent = 'UI Recorder needs access to websites to record them. Click Start again and choose Allow.';
+    errorEl.hidden = false;
+    return;
+  }
+
   const result = await chrome.runtime.sendMessage({ type });
   button.disabled = false;
 

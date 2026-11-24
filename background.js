@@ -180,10 +180,19 @@ async function closeOffscreenDocument() {
   }
 }
 
+// Website access is an optional permission (see manifest.json). The popup asks
+// for it on Start; this guards against a start that gets here without it, e.g.
+// after the user removed the permission in chrome://extensions.
+const SITE_ACCESS = { origins: ['<all_urls>'] };
+const SITE_ACCESS_MESSAGE = 'UI Recorder needs access to websites to record them. Click Start again and choose Allow.';
+
 async function startRecording() {
   const state = await getState();
   if (state.recording) {
     return { ok: false, error: `Already ${state.mode === 'steps' ? 'capturing steps' : 'recording'}.` };
+  }
+  if (!(await chrome.permissions.contains(SITE_ACCESS))) {
+    return { ok: false, error: SITE_ACCESS_MESSAGE };
   }
 
   const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -881,6 +890,9 @@ async function startStepCapture() {
   const state = await getState();
   if (state.recording) {
     return { ok: false, error: `Already ${state.mode === 'steps' ? 'capturing steps' : 'recording'}.` };
+  }
+  if (!(await chrome.permissions.contains(SITE_ACCESS))) {
+    return { ok: false, error: SITE_ACCESS_MESSAGE };
   }
 
   const pending = await getPendingReviewCount();

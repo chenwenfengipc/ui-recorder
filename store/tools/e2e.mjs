@@ -16,7 +16,9 @@ fs.mkdirSync(OUT, { recursive: true });
 fs.mkdirSync(DL, { recursive: true });
 
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
-const { proc, cdp, version } = await launchChrome({ extensionPath: EXT, userDataDir: path.join(WORK, 'profile'), downloadDir: DL });
+// The profile keeps the site access you granted once with grant-site-access.mjs (a separate profile per extension build).
+const PROFILE = path.join(WORK, process.env.EXT_PATH ? 'profile-permitted-pkg' : 'profile-permitted');
+const { proc, cdp, version } = await launchChrome({ extensionPath: EXT, userDataDir: PROFILE, downloadDir: DL, keepProfile: true });
 log('browser', version);
 const results = { checks: [] };
 const check = (name, ok, detail = '') => { results.checks.push({ name, ok, detail }); log(ok ? 'PASS' : 'FAIL', name, detail); };
@@ -58,6 +60,11 @@ try {
   if (!bg) throw new Error('extension service worker not found');
   log('extension id', extId);
   const bgEval = (e) => bg.eval(e);
+  if (!(await bgEval('chrome.permissions.contains({origins:["<all_urls>"]})'))) {
+    log('FAIL', 'site access is not granted for this build: run  node store/tools/grant-site-access.mjs  once, click Allow, then run this again');
+    proc.kill();
+    process.exit(1);
+  }
 
 
   // ---- the page to record ----

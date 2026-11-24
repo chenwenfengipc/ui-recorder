@@ -60,7 +60,7 @@ const slides = {
     <div class="logo"><img src="${icon}"> UI Recorder</div>
     <h1>Record your screen.<br><span>Or build a guide.</span></h1>
     <div class="sub">One click starts a video recording, or a click-by-click capture that turns into a step-by-step guide with screenshots.</div>
-    <div class="chips"><span class="chip">Tab, window or screen</span><span class="chip">Pause &amp; resume</span><span class="chip">Local or Google Drive</span></div>
+    <div class="chips"><span class="chip">Tab, window or screen</span><span class="chip">Pause &amp; resume</span><span class="chip">No account needed</span></div>
   </div>
   <div class="page frame"><img src="${u('raw_01_overlay.png')}"></div>
   <div class="pop"><img src="${u('raw_08_popup.png')}"></div>`,
@@ -94,7 +94,7 @@ const slides = {
 
   '5_ready_to_share_guide': headSlide({
     title: 'Get a ready-to-share guide',
-    sub: 'A clean page with numbered steps and screenshots, saved on your computer or to your Google Drive',
+    sub: 'A clean page with numbered steps and screenshots, saved right on your computer',
     img: u('raw_06_guide_top.png'),
   }),
 };
@@ -105,7 +105,7 @@ const tile = `<!doctype html><meta charset="utf-8"><style>${base}
   .box { text-align: center; padding: 0 26px; }
   .box img { width: 84px; height: 84px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
   h1 { margin-top: 16px; font-size: 40px; font-weight: 800; letter-spacing: -.5px; }
-  p { margin-top: 8px; font-size: 19px; line-height: 1.3; color: #b9c6e8; }
+  p { margin-top: 8px; font-size: 17px; line-height: 1.3; color: #b9c6e8; }
 </style><div class="box"><img src="${icon}"><h1>UI Recorder</h1><p>Screen recorder &amp; step-by-step guide maker</p></div>`;
 
 const marquee = `<!doctype html><meta charset="utf-8"><style>${base}
@@ -120,7 +120,7 @@ const marquee = `<!doctype html><meta charset="utf-8"><style>${base}
 </style>
 <div class="copy"><div class="logo"><img src="${icon}"> UI Recorder</div>
   <h1>Record your screen.<br><span>Or build a guide.</span></h1>
-  <div class="sub">Video recordings and step-by-step guides with screenshots &mdash; saved locally or to Google Drive.</div></div>
+  <div class="sub">Video recordings and step-by-step guides with screenshots, saved on your own computer.</div></div>
 <div class="shot frame"><img src="${u('step_03.png')}"></div>
 <div class="shot2 frame"><img src="${u('step_08.png')}"></div>`;
 

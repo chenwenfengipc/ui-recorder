@@ -144,6 +144,8 @@ Then tick all three certifications:
 ```
 No sign-in or account is needed.
 
+Website access: the extension asks for access to websites the first time Start is pressed (it is an optional permission, not granted at install). Click "Allow" in Chrome's prompt, then continue.
+
 Step-by-step capture:
 1. Open any website, for example https://example.com or https://www.wikipedia.org.
 2. Click the UI Recorder toolbar icon, then "Start Step-by-Step Capture".

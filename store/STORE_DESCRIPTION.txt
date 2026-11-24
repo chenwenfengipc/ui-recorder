@@ -1,0 +1,94 @@
+UI Recorder: record your screen, or turn any click-through into a step-by-step guide.
+
+Create how-to guides, tutorials, procedures and demo videos in minutes. UI Recorder is a lightweight Chrome extension with two ways to capture your work:
+
+• Record a video of a browser tab, an application window or your whole screen.
+• Click through a process and get a numbered guide with a screenshot for every step. Each click is highlighted and described for you.
+
+There is nothing to set up. No account, no sign-up, and nothing is uploaded anywhere. Your recordings and guides are saved on your own computer.
+
+
+WHY INSTALL UI RECORDER
+
+Writing a how-to guide by hand means taking screenshots, cropping them, numbering them and describing every step again. UI Recorder does that while you work: do the task once, stop, review the steps, and share the result.
+
+It handles the parts of the web that trip up simpler tools:
+
+• It waits for the page to finish loading. A click that opens a new page is captured once the page is ready, not as a blank white screen.
+• It captures pop-ups and dialogs. Menus, drawers, cookie banners and modal windows that open after a click appear in your guide.
+• It captures chat widgets and embedded content. Clicks inside iframes, including support chat windows, are recorded.
+• It follows you across pages. If a click loads a new page in the same tab, the capture keeps going.
+
+
+FEATURES
+
+1. Video recording
+• Record a browser tab, an application window or the entire screen.
+• Pause and resume during a recording, so you keep only the parts you want.
+• Stop with the on-page Stop button or the Esc key.
+• Include tab or system audio when Chrome asks what to share.
+• The result is a .webm video saved to your Downloads folder.
+
+2. Step-by-step capture
+• Start the capture and work through the process as you normally would.
+• A screenshot is taken at every click, with the clicked element outlined in red.
+• Each step gets a plain-English caption, such as "Click Save" or "Click Email", so you don't have to write them.
+• Steps stay in the order you clicked them, even when a page takes a moment to load.
+• Pause at any time to leave out sensitive or unwanted steps.
+
+3. Review before you publish
+When you stop a step capture, a review page opens with every step as a card:
+• Drag steps into a new order, or use the arrow buttons on each card.
+• Delete any step you don't need. An Undo button stays available for a few seconds.
+• Click any screenshot to see it at full size.
+• Nothing is written to your computer until you press Generate guide.
+• Your edits are saved as you go. If you close the review tab, reopen it from the toolbar menu.
+
+4. A guide you can share anywhere
+A generated guide is a simple web page (index.html) with a numbered screenshot for each step. Open it in any browser, print it to PDF, or zip the folder and send it to a colleague. You can edit the captions in any text editor.
+
+
+WHO IT IS FOR
+
+• Support and success teams writing help-centre articles and customer instructions
+• IT and operations teams documenting procedures and onboarding steps
+• Trainers and HR teams building how-to material for new joiners
+• QA engineers and developers attaching clear reproduction steps to bug reports
+• Anyone who has ever typed "first click here, then click there" into an email
+
+
+PRIVACY
+
+Your data stays with you.
+
+• Recordings, screenshots and guides are saved only on your computer.
+• UI Recorder does not send anything to its developer or to any third party.
+• It does not need an account, and it contains no analytics or advertising.
+• Typed text is never recorded, and password fields are never read. Only your clicks are captured.
+• Your browsing history, cookies and the addresses of the pages you visit are not stored.
+
+Read the full privacy policy: [PRIVACY POLICY URL]
+
+
+HOW TO USE IT
+
+1. Open the page where your process starts, and sign in first if needed.
+2. Click the UI Recorder icon, then choose Start Recording or Start Step-by-Step Capture.
+3. Do the task. Use the floating Pause and Stop controls on the page when you need them.
+4. Stop the capture. For a step guide, review the steps, then click Generate guide.
+5. Find your files in Downloads, in the recordings folder.
+
+
+LIMITATIONS
+
+These limits help you decide whether UI Recorder fits your task:
+
+• Step capture follows the browser tab where it started. If a click opens a new tab or window, that tab is not included.
+• Chrome does not allow extensions to run on chrome:// pages, on other extensions' pages or on the Chrome Web Store, so those pages cannot be captured.
+• Step capture records clicks. It does not record typing or scrolling.
+• Pressing Esc ends a capture, so close pop-ups with their own close button while you are recording.
+
+
+SUPPORT
+
+Questions, bug reports or feature ideas: [SUPPORT EMAIL]
